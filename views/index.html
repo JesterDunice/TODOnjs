@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>TODO</title>
+  <link rel="stylesheet" href="./stylesheets/style.css"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=0.85, maximum-scale=0.85, user-scalable=0">
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  <script src="./javascripts/todo.js"></script>
+</head>
+
+<body>
+<div class="todo-app">
+
+  <input class="new-todo" id="search" placeholder="What needs to be done?" autofocus="">
+  <ul class="todo-list">
+
+
+  </ul>
+  <div class="counters">
+    <label class="counter-label" id="all-counter"></label>
+    <label class="counter-label" id="comp-counter"></label>
+    <label class="counter-label" id="notcomp-counter"></label>
+  </div>
+  <div class="control">
+    <input class="cb-all" type="checkbox" id="ctrl-cb">
+    <button class="ctr-but" id="add-task">ADD TASK</button>
+    <button class="ctr-but" id="del-completed">Delete Completed</button>
+    <button class="ctr-but" id="All">All</button>
+    <button class="ctr-but" id="Completed">Completed</button>
+    <button class="ctr-but" id="Active">Active</button>
+    <button class="ctr-but" id="Log">Log</button>
+  </div>
+  <div class="page-ctrl">
+   <a href="#" class="border-links hidden-bl" id="first"><<</a>
+    <a href="#" class="border-links hidden-bl" id="prev"><</a>
+    <span class="page-links-list"></span>
+    <a href="#" class="border-links hidden-bl" id="next">></a>
+    <a href="#" class="border-links hidden-bl" id="last">>></a>
+  </div>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,113 @@
+body{
+  margin: auto;
+  background: #77acac;
+  font-size: 20px;
+  font-family: "Tahoma";
+  padding: 0;
+}
+
+.todo-app{
+  width: 500px;
+  margin: 200px auto;
+}
+
+.new-todo{
+  background: #8bd9d9;
+  border: none;
+  color: #447777;
+  font-size: inherit;
+  height: 60px;
+  padding: 0 0 0 10px;
+  width: calc(100% - 10px);
+}
+
+.todo-list{
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  background: #044;
+  list-style-type: none;
+}
+
+.new-task{
+
+  width: 100%;
+  height: 50px;
+  background: #447777;
+}
+
+.hidden-li{
+  display: none;
+}
+
+
+.page-vi {
+  display: block;
+}
+
+.label-task{
+  color: #ffdd55;
+  font-size: inherit;
+  font-family: inherit;
+  vertical-align: 4px;
+}
+
+.cb{
+  background: #777;
+  border: none;
+  height: 20px;
+  margin-top: 20px;
+  margin-left: 10px;
+  width: 20px;
+  cursor: pointer;
+}
+
+.destroy{
+  background: #ffdd55;
+  border: none;
+  color: red;
+  float: right;
+  font-family: inherit;
+  font-size: inherit;
+  height: 30px;
+  margin-right: 10px;
+  margin-top: 10px;
+  width: 30px;
+}
+
+.destroy:hover{
+  cursor: pointer;
+  filter: hue-rotate(45deg);
+}
+
+.counters{
+  background: #8BD9D9;
+  height: 60px;
+  width: 100%;
+}
+
+.counter-label{
+  display: inline-block;
+  color: #447777;
+  font-family: inherit;
+  font-size: inherit;
+  height: 100%;
+  margin-top: 20px;
+  width: 35%;
+}
+.counter-label:first-child{
+  padding-left: 20px;
+  width: 20%;
+}
+
+.page-links-lrg{
+  font-size: 50px;
+}
+
+border-links{
+
+}
+
+.hidden-bl{
+  display: none;
+}
