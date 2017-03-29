@@ -6,18 +6,17 @@ var PAGE_NUMBER = 0;
 var QUANTITY_SHOW = 0;
 var STATE = "all";          // show state var: "all", "active", "completed"
 var tasks = [];
-var xhr = new XMLHttpRequest();
+
 
 $(document).ready(function () {
 
-  //xhr.open('GET', '/data', true);
-  //xhr.send();
+  GetRequest();
 
   // input name of task and added after press key "Enter" or button "Add task"
   $("#search").keyup(function (event) {
     if (($("#search").val() != '') && (event.keyCode == 13)) {
       NewTask();
-      RenameTasks();
+      //RenameTasks();
       Counters();
     }
   });
@@ -31,17 +30,17 @@ $(document).ready(function () {
       b = 0;
 
     tasks.forEach(function (task) {
-      if (task.checked === true) {
+      if (task.done === true) {
         b++;
       }
     });
     if (a != 0 && b != a) {
       tasks.forEach(function (task) {
-        task.checked = true;
+        task.done = true;
       });
     } else if (a != 0 && b == a) {
       tasks.forEach(function (task) {
-        task.checked = false;
+        task.done = false;
       });
     }
     Counters();
@@ -51,23 +50,16 @@ $(document).ready(function () {
   $('#add-task').click(function () {
     if ($("#search").val() != '') {
       NewTask();
-      RenameTasks();
       Counters();
     }
   });
 
-  //events on ul
+  //events on <ul>
   // delete task
   $('ul').on('click', '.destroy', function () {
-    var a = $(this).parent().attr('id');
-    tasks.forEach(function (task, i) {
-      if (task.id === a) {
-        a = i;
-      }
-    });
-    tasks.splice(a, 1);
+    var deleteId = $(this).parent().attr('id');
+    DeleteRequest(deleteId);
     QUANTITY_SHOW--;
-    RenameTasks();
     Counters();
   });
   // check/uncheck ctrl checkbox
@@ -75,15 +67,9 @@ $(document).ready(function () {
 
   // delete all completed tasks
   $('#del-completed').click(function () {
-    var a = tasks.length;
-    for (var i = 0; i < a; i++)
-      if (tasks[i].checked === true) {
-        tasks.splice(i, 1);
-        i--;
-        a--;
-      }
+    DoneDeleteRequest();
     SetCurPage();
-    RenameTasks();
+    //RenameTasks();
     Counters();
   });
   // reset ctrl checkbox to unchecked
@@ -139,35 +125,37 @@ $(document).ready(function () {
   $('.page-ctrl').on('click', '.border-links', PageShowArrows);
 
   // Logging tasks
-  $('#Log').on('click', Logging);
+  $('#Log').on('click', GetRequest);
 
 });
 
 // add new task
 function NewTask() {
-  tasks.push({name: $("#search").val(), checked: false, id: 'fred-' + (tasks.length + 1)});
+  var task = {name: $("#search").val(), done: false};
+  var taskId = PostRequest(task);
+
   //clear input text area
   $('#search').val('');
 }
 
-function RenameTasks() {
-  tasks.forEach(function (task, i) {
-    task.id = "fred-" + (i + 1);
-  });
-}
+// function RenameTasks() {
+//   tasks.forEach(function (task, i) {
+//     task.id = "fred-" + (i + 1);
+//   });
+// }
 
 function CtrlCheck() {
-  //var a = ($(this).parent().index()) + (CURRENT_PAGE - 1) * PAGE_LENGTH;
-  var a = $(this).parent().attr('id');
-  tasks.forEach(function (task) {
-    if (task.id === a) {
-      if (task.checked === false) {
-        $(task).attr('checked', true);
-      } else {
-        $(task).attr('checked', false);
-      }
-    }
-  });
+  var checkingId = $(this).parent().attr('id');
+  checkPatchRequest(checkingId);
+  // tasks.forEach(function (task) {
+  //   if (task.id === a) {
+  //     if (task.done === false) {
+  //       $(task).attr('done', true);
+  //     } else {
+  //       $(task).attr('done', false);
+  //     }
+  //   }
+  // });
   Counters();
 }
 
@@ -176,7 +164,7 @@ function Counters() {
     b = 0,
     c = 0;
   tasks.forEach(function (task) {
-    if (task.checked === true) {
+    if (task.done === true) {
       b++;
     }
     else {
@@ -275,7 +263,7 @@ function Show() {
   tasks.forEach(function (task) {
     switch (STATE) {
       case 'all':
-        checked_state = task.checked;
+        checked_state = task.done;
         break;
       case 'active':
         checked_state = false;
@@ -283,7 +271,7 @@ function Show() {
       case 'completed':
         checked_state = true;
     }
-    if (task.checked === checked_state) {
+    if (task.done === checked_state) {
       if (count >= (CURRENT_PAGE - 1) * PAGE_LENGTH && count < CURRENT_PAGE * PAGE_LENGTH) {
         $("<li/>", {
           "class": "new-task",
@@ -328,7 +316,7 @@ function PageNumFinder() {
     case 'active':
       var b = 0;
       tasks.forEach(function (task) {
-        if (task.checked === false) {
+        if (task.done === false) {
           b++;
         }
       });
@@ -337,7 +325,7 @@ function PageNumFinder() {
     case 'completed':
       var c = 0;
       tasks.forEach(function (task) {
-        if (task.checked === true) {
+        if (task.done === true) {
           c++;
         }
       });
@@ -353,7 +341,78 @@ function Logging() {
     //db.tasks.insert(a);
     //db.tasks.find()
     //console.log('OK');
-  xhr.open('POST', '/data', true);
-  xhr.send(tasks);
+}
 
+function GetRequest() {
+  $.ajax({
+    type: "GET",
+    url: "/todos",
+    success: function (data) {
+      tasks = [];
+      data.forEach((obj) => {
+        var task = {
+          name: obj.name,
+          id: obj._id,
+          done: obj.done,
+        };
+        tasks.push(task);
+      });
+      Counters();
+    },
+  });
+}
+
+function PostRequest(task){
+  $.ajax({
+    type: "POST",
+    url: "/todos",
+    data: JSON.stringify(task),
+    dataType: "json",
+    contentType: "application/json",
+    success: function(data){
+          var task = {
+            name: data.name,
+            id: data._id,
+            done: data.done,
+          };
+          tasks.push(task);
+      Counters();
+    },
+  });
+}
+
+function checkPatchRequest(Id){
+
+  var taskIndex = tasks.findIndex( (task) => {if (task.id == Id) return task});
+  var done = tasks[taskIndex].done ? false : true;
+
+  $.ajax({
+    type: "PATCH",
+    url: "/todos/" + tasks[taskIndex].id + '&' + done,
+    dataType: "json",
+    success: function(data){
+      GetRequest();
+    },
+  });
+}
+
+function DeleteRequest(Id){
+  $.ajax({
+    type: "DELETE",
+    url: "/todos/" + Id,
+    success: function(){
+      GetRequest();
+    },
+  });
+}
+
+
+function DoneDeleteRequest(){
+  $.ajax({
+    type: "DELETE",
+    url: "/todos",
+    success: function(){
+      GetRequest();
+    },
+  });
 }

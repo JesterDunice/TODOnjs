@@ -24,7 +24,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', index);
-app.use('/data', todos);
+app.use('/todos', todos);
 app.all('*', function(req, res) {
   res.redirect("/");
 });
