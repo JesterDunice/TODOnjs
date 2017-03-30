@@ -26,24 +26,20 @@ $(document).ready(function () {
 
   // check/uncheck all tasks
   $('#ctrl-cb').click(function () {
-    var a = tasks.length,
-      b = 0;
+    var tasksNumber = tasks.length,
+      counterDoneTasks = 0;
 
     tasks.forEach(function (task) {
       if (task.done === true) {
-        b++;
+        counterDoneTasks++;
       }
     });
-    if (a != 0 && b != a) {
-      tasks.forEach(function (task) {
-        task.done = true;
-      });
-    } else if (a != 0 && b == a) {
-      tasks.forEach(function (task) {
-        task.done = false;
-      });
+    if (tasksNumber != 0 && counterDoneTasks != tasksNumber) {
+      CheckAllRequest(true);
+    } else if (tasksNumber != 0 && counterDoneTasks == tasksNumber) {
+      CheckAllRequest(false);
     }
-    Counters();
+    //Counters();
   });
 
   // add task button
@@ -87,6 +83,7 @@ $(document).ready(function () {
         $(window.lb).attr("contenteditable", false);
         tasks.forEach(function (task) {
           if (task.id === window.lb_id) {
+            RenamePatchRequest(task.id, $(window.lb).text());
             task.name = $(window.lb).text();
           }
         });
@@ -101,6 +98,7 @@ $(document).ready(function () {
       $(lab).attr("contenteditable", false); // меняем его аттрибут
       tasks.forEach(function (task) {
         if (task.id === window.lb_id) {
+          RenamePatchRequest(task.id, $(window.lb).text());
           task.name = $(window.lb).text();
         }
       });
@@ -124,39 +122,21 @@ $(document).ready(function () {
   // arrows links
   $('.page-ctrl').on('click', '.border-links', PageShowArrows);
 
-  // Logging tasks
-  $('#Log').on('click', GetRequest);
 
 });
 
 // add new task
 function NewTask() {
-  var task = {name: $("#search").val(), done: false};
-  var taskId = PostRequest(task);
+  var task = {name: $("#search").val()};
+  PostRequest(task);
 
   //clear input text area
   $('#search').val('');
 }
 
-// function RenameTasks() {
-//   tasks.forEach(function (task, i) {
-//     task.id = "fred-" + (i + 1);
-//   });
-// }
-
 function CtrlCheck() {
   var checkingId = $(this).parent().attr('id');
   checkPatchRequest(checkingId);
-  // tasks.forEach(function (task) {
-  //   if (task.id === a) {
-  //     if (task.done === false) {
-  //       $(task).attr('done', true);
-  //     } else {
-  //       $(task).attr('done', false);
-  //     }
-  //   }
-  // });
-  Counters();
 }
 
 function Counters() {
@@ -334,15 +314,6 @@ function PageNumFinder() {
   return a;
 }
 
-function Logging() {
-  var a = JSON.stringify(tasks);
-  console.log(tasks);
-  console.log(a);
-    //db.tasks.insert(a);
-    //db.tasks.find()
-    //console.log('OK');
-}
-
 function GetRequest() {
   $.ajax({
     type: "GET",
@@ -366,17 +337,9 @@ function PostRequest(task){
   $.ajax({
     type: "POST",
     url: "/todos",
-    data: JSON.stringify(task),
-    dataType: "json",
-    contentType: "application/json",
+    data: task,
     success: function(data){
-          var task = {
-            name: data.name,
-            id: data._id,
-            done: data.done,
-          };
-          tasks.push(task);
-      Counters();
+      GetRequest();
     },
   });
 }
@@ -388,9 +351,9 @@ function checkPatchRequest(Id){
 
   $.ajax({
     type: "PATCH",
-    url: "/todos/" + tasks[taskIndex].id + '&' + done,
-    dataType: "json",
-    success: function(data){
+    url: "/todos/" + tasks[taskIndex].id,
+    data: 'done=' + done,
+    success: function(){
       GetRequest();
     },
   });
@@ -413,6 +376,28 @@ function DoneDeleteRequest(){
     url: "/todos",
     success: function(){
       GetRequest();
+    },
+  });
+}
+
+function CheckAllRequest(done){
+  $.ajax({
+    type: "PATCH",
+    url: "/todos",
+    data: 'done=' + done,
+    success: function(){
+      GetRequest();
+    },
+  });
+}
+
+function RenamePatchRequest(Id, name){
+  $.ajax({
+    type: "PATCH",
+    url: "/todos/" + Id,
+    data: 'name=' + name,
+    success: function(){
+      return null;
     },
   });
 }
