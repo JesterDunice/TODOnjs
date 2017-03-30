@@ -14,7 +14,7 @@ router.patch('/:id',controller.updateTask);
 
 router.patch('/', controller.checkAllTasks);
 
-router.delete('/', controller.deleteAllTasks);
+router.delete('/done', controller.deleteDoneTasks);
 
 router.delete('/:id', controller.deleteTaskById);
 

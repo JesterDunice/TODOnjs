@@ -373,7 +373,7 @@ function DeleteRequest(Id){
 function DoneDeleteRequest(){
   $.ajax({
     type: "DELETE",
-    url: "/todos",
+    url: "/todos/done",
     success: function(){
       GetRequest();
     },

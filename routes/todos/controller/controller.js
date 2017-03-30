@@ -50,7 +50,7 @@ function updateTask(req, res){
   );
 }
 
-function deleteAllTasks(req, res) {
+function deleteDoneTasks(req, res) {
   Todos.remove({done: true},
     function (err, doc) {
       if (err) return res.send(500, {error: err});
@@ -69,4 +69,4 @@ function deleteTaskById(req, res) {
   );
 }
 
-module.exports = {loadTasks, addTask, checkAllTasks, updateTask, deleteAllTasks, deleteTaskById};
+module.exports = {loadTasks, addTask, checkAllTasks, updateTask, deleteDoneTasks, deleteTaskById};
