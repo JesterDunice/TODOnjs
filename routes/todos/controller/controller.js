@@ -38,29 +38,16 @@ function updateTask(req, res){
   var UniqueId = req.params.id;
   var checkupArray = {};
 
-  if (req.body.done) {
+  if (req.body.done) checkupArray.done = req.body.done;
+  if (req.body.name)  checkupArray.name = req.body.name;
 
-    checkupArray.done = req.body.done;
 
-    Todos.findByIdAndUpdate(UniqueId, {$set: {done: checkupArray.done}},
-      function (err, doc) {
-        if (err) return res.send(500, {error: err});
-        return res.send("succesfully checked/unchecked");
-      }
-    );
-  } else if (req.body.name) {
-
-    checkupArray.name = req.body.name;
-
-    Todos.findByIdAndUpdate(UniqueId, {$set: {name: checkupArray.name}},
-      function (err, doc) {
-        if (err) return res.send(500, {error: err});
-        return res.send("succesfully renamed");
-      }
-    );
-  } else {
-    return res.send(500, "error");
-  }
+  Todos.findByIdAndUpdate(UniqueId, {$set: checkupArray},
+    function (err, doc) {
+      if (err) return res.send(500, {error: err});
+      return res.send("succesfully updated");
+    }
+  );
 }
 
 function deleteAllTasks(req, res) {
